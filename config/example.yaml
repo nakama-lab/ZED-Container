@@ -1,0 +1,65 @@
+/**:
+  ros__parameters:
+    # -------- General Camera Configuration --------
+    general:
+      camera_name: zed2                # Node name for the camera
+      camera_model: zed2              # Camera model: zed, zedm, zed2, zed2i, zedx, zedxm
+      resolution: 2                   # 0=HD2K, 1=HD1080, 2=HD720, 3=VGA
+      grab_frame_rate: 30.0           # Camera capture frame rate
+
+    # -------- Video Settings --------
+    video:
+      brightness: 1                   # Brightness: [0 - 8]
+      contrast: 3                     # Contrast: [0 - 8]
+      hue: 0                          # Hue: [-1 = auto, 0 - 11]
+      saturation: 7                   # Saturation: [0 - 8]
+      sharpness: 4                    # Sharpness: [0 - 8]
+      gamma: 9                        # Gamma: [1 - 9]
+
+    # -------- Depth Settings --------
+    depth:
+      depth_enabled: false            # Disable depth computation
+      quality: 1                      # Depth quality: 0=None, 1=Performance, 2=Quality, 3=Ultra
+      min_depth: 0.3                  # Minimum depth distance in meters
+      max_depth: 20.0                 # Maximum depth distance in meters
+      openni_depth_mode: false        # If true, publishes depth in 16-bit format like OpenNI
+
+    # -------- Positional Tracking --------
+    positional_tracking:
+      pos_tracking_enabled: false     # Disable positional tracking
+      publish_tf: false               # Disable publishing TF transforms
+      publish_map_tf: false           # Do not publish map -> odom TF
+      publish_odom_tf: false          # Do not publish odom -> base TF
+      base_frame: base_link           # Base frame ID
+      map_frame: map                  # Map frame ID
+      odometry_frame: odom            # Odometry frame ID
+      area_memory: false              # Disable area memory saving/loading
+      floor_alignment: false          # Do not align to the floor
+      imu_fusion: false               # No IMU fusion
+      pose_smoothing: false           # No smoothing of pose output
+
+    # -------- Sensors Data --------
+    sensors:
+      sensors_enabled: true           # Enable publishing IMU, magnetometer, barometer, temperature
+      publish_imu_tf: false           # Do not publish IMU -> base TF
+
+    # -------- Object Detection --------
+    object_detection:
+      obj_det_enabled: false          # Disable object detection
+      model: MULTI_CLASS_BOX          # Type of model: PERSON_HEAD_BOX, PERSON_BOX, MULTI_CLASS_BOX, MULTI_CLASS_BOX_ACCURATE
+      confidence_threshold: 50        # Detection confidence [0-100]
+      tracking: false                 # Disable tracking of detected objects
+
+    # -------- Advanced Controls --------
+    advanced:
+      exposure: -1                    # -1 = auto, otherwise 0–100 (manual exposure)
+      gain: -1                        # -1 = auto, otherwise 0–100 (manual gain)
+      auto_exposure_gain: true        # Automatically control exposure and gain
+      whitebalance_temperature: 42    # 2800–6500K, only if auto_whitebalance is false
+      auto_whitebalance: true         # Enable automatic white balance
+
+    # -------- Streaming (if used) --------
+    stream:
+      stream_enabled: false           # Streaming disabled
+      stream_address: "239.255.42.99" # Multicast IP (if enabled)
+      stream_port: 30000              # Port to stream data

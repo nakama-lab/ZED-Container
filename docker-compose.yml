@@ -1,0 +1,47 @@
+services:
+  # Build stage: Used only for building the image from the Dockerfile
+  zed_camera:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Ubuntu version
+        UBUNTU_MAJOR: "22"
+        UBUNTU_MINOR: "04"
+        # CUDA version (adjusted to the CUDA version on this PC)
+        CUDA_MAJOR: "12"
+        CUDA_MINOR: "2"
+        CUDA_PATCH: "2"
+        # ZED SDK version
+        ZED_SDK_MAJOR: "4"
+        ZED_SDK_MINOR: "2"
+        ZED_SDK_PATCH: "5"
+    image: zed_ros2_desktop_u22.04_sdk_4.2.5_cuda_12.2.2:latest  # <-- Tagging the built image (also update the version numbers if needed)
+    container_name: Zedcam
+    runtime: nvidia
+    privileged: true
+    network_mode: "host"
+    ipc: "host"
+    pid: "host"
+
+    environment:
+      - ROS_DOMAIN_ID=55
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix        # X11 for GUI apps like RViz
+      - /dev:/dev                            # Device access for ZED camera
+      - /dev/shm:/dev/shm                    # Shared memory for performance
+      - ./config/:/root/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/config/ # Hot-swappable config files
+
+    stdin_open: true
+    tty: true
+    command: >
+      /bin/bash -c "
+        source /opt/ros/humble/setup.bash &&
+        cd ~/ros2_ws &&
+        source install/setup.bash &&
+        ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedm"
+
