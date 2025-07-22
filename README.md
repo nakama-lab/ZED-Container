@@ -58,6 +58,54 @@ Paste:
 }
 ```
 
+
+### 2. Tune DDS parameters on every PC
+
+It is **essential** that you perform the following steps **on every PC in the network** (or at least all PCs which will use ZED data at all).
+The steps were obtained from <https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#tuning-for-large-messages>.
+
+Create a new configuration file:
+
+```bash
+sudo nano /etc/sysctl.d/10-optimize-zed.conf
+```
+
+Paste the following into the file:
+
+```text
+# The following file persists changes made to networking to handle large messages for ZED.
+# Source: https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#tuning-for-large-messages
+
+# IP fragmentation settings
+net.ipv4.ipfrag_time=3  # in seconds, default is 30 s. See https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#reduce-fragment-timeout-time
+net.ipv4.ipfrag_high_thresh=134217728  # 128 MiB, default is 256 KiB. See https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#increase-the-maximum-memory-used-to-reassemble-ip-fragments
+
+# Increase the maximum receive buffer size for network packets
+net.core.rmem_max=2147483647  # 2 GiB, default is 208 KiB. See https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#increase-the-maximum-linux-kernel-receive-buffer-size
+```
+
+Save the file and reboot.
+
+Validate the sysctl settings, after a reboot:
+
+```bash
+sysctl net.core.rmem_max net.ipv4.ipfrag_time net.ipv4.ipfrag_high_thresh
+# Expected output:
+# net.core.rmem_max = 2147483647
+# net.ipv4.ipfrag_time = 3
+# net.ipv4.ipfrag_high_thresh = 134217728
+```
+
+#### (optional) Additional steps recommended by ZED
+
+There are other steps to try too, but they were not tested in our lab.
+
+* Use [Cyclone DDS](https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#change-dds-middleware).
+* Change [MTU size](https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#change-mtu-size).
+* Use [Compressed topics](https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#use-compressed-topics).
+* [Downscale or downsample the data](https://www.stereolabs.com/docs/ros2/dds_and_network_tuning#use-smaller-and-less-frequent-information-for-data-preview).
+
+
 ---
 
 ## 🛠️ Building the Docker Image
